@@ -1,0 +1,21 @@
+Capture:
+1. > python hello_config.py -m localhost:27017:sacred_demo
+(> python hello_config.py with seed=0)
+
+
+View in Omniboard
+1. launch node.js command window
+2. > omniboard -m localhost:27017:sacred_demo
+3. in browser: http://localhost:9000/
+
+
+Create a new MongoDB database
+1. use MongoDB Compass
+
+
+reference:
+https://sacred.readthedocs.io/en/latest/observers.html
+https://vivekratnavel.github.io/omniboard/#/quick-start?id=how-it-works
+
+https://github.com/fo40225/tensorflow-windows-wheel/tree/master/1.8.0/py36/CPU/avx2
+https://github.com/fo40225/tensorflow-windows-wheel/1.8.0/py36/CPU/avx2
