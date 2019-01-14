@@ -4,7 +4,7 @@
 # run with python 04_model_play.py with seed=0
 # loss matches at each epoch. Also at evaluation
 # Solution: fix seed in python hash, numpy, tensorflor. Fix thread in tensorflor. -> training process fixed
-# Remove batch normalization -> evaluation fixed
+# use generator length as steps for evaluate_generator -> evaluation fixed
 
 import os
 import numpy as np
@@ -26,8 +26,8 @@ def my_config():
     target_height = 32
     target_width  = 32
     target_channel = 1
-    epochs = 20
-    batch_size = 32
+    epochs = 100
+    batch_size = 64
     
     augment = [{
 #        'rotation_range': 40,
@@ -157,7 +157,7 @@ def my_main(target_height, target_width, target_channel,
         model.add(Conv2D(layer['filters'],
                          kernel_size = layer['kernel_size'],
                          activation  = layer['activation']))
-#        model.add(BatchNormalization())
+        model.add(BatchNormalization())
         model.add(MaxPooling2D(pool_size = maxpooling_pool_size))
         model.add(Dropout(maxpooling_dropout))
     # the model so far outputs 3D feature maps (height, width, features)
@@ -168,7 +168,7 @@ def my_main(target_height, target_width, target_channel,
     
     for layer in dense_layers:
         model.add(Dense(layer['size'], activation = layer['activation']))
-#        model.add(BatchNormalization())
+        model.add(BatchNormalization())
         if layer != dense_layers[-1]:
             model.add(Dropout(dense_dropout))
             
@@ -215,8 +215,8 @@ def my_main(target_height, target_width, target_channel,
                                   validation_data = validation_generator,
                                   epochs = epochs,
                                   verbose = 2,
-                                  steps_per_epoch = 342 // batch_size,
-                                  validation_steps= 114 // batch_size,
+                                  steps_per_epoch = len(train_generator),
+                                  validation_steps= len(validation_generator),
                                   callbacks = [
                                           ModelCheckpoint("weights.hdf5", monitor='val_loss',
                                                           save_best_only=True, mode='auto', period=1, verbose=0),
@@ -226,9 +226,9 @@ def my_main(target_height, target_width, target_channel,
     
     model.load_weights("weights.hdf5")
     model_loss, model_acc = model.evaluate_generator(generator = train_generator,
-                                                     steps = 342 // batch_size)                              
+                                                     steps = len(train_generator))                              
     model_val_loss, model_val_acc = model.evaluate_generator(generator = validation_generator,
-                                                             steps = 114 // batch_size)
+                                                             steps = len(validation_generator))
     
     print('best model metrics on train set: ', str(round(model_acc, 4)), str(round(model_loss, 4)))
     print('best model metrics on valid set: ', str(round(model_val_acc, 4)), str(round(model_val_loss, 4)))
