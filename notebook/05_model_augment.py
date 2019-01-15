@@ -5,6 +5,7 @@
 # loss matches at each epoch. Also at evaluation
 # Solution: fix seed in python hash, numpy, tensorflor. Fix thread in tensorflor. -> training process fixed
 # use generator length as steps for evaluate_generator -> evaluation fixed
+# Augmentation using ImageDataGenerator breaks reproducibility
 
 import os
 import numpy as np
@@ -54,7 +55,7 @@ def my_config():
     
     data_version_number = '0_1'
     
-    message = 'Previous test failed. Fix seed_value=0. Remove augment. Test reproducibility.'
+    message = 'Previous test failed. Roll back to ID 14. Expect 0.5702, 1.5042.'
 
 
 @ex.capture
